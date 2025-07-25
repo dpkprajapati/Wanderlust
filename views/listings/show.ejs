@@ -1,0 +1,32 @@
+ <% layout("layouts/boilerplate") -%>  
+ 
+<div class="row mt-3">
+    <div class=" col-8 offset-2">
+        <h3>Listing Details</h3>
+    </div>    
+    <div class="card col-6 offset-2">
+        <img src="<%=showlist.image%>" class="card-img-top" alt="listing" style="height: 300px; width: 100%; object-fit: cover;">
+        <div class="card-body">
+            <p card-text>
+                <b><%=showlist.title%></b> <br>
+                <%=showlist.description%> <br>
+                <%=showlist.price%> <br>
+                <%=showlist.country%> <br>
+                <%=showlist.location%> <br>
+            </p>
+        </div>
+    </div>
+
+
+    <div class="btns bt-btn">
+        <a href="/listings/_<%=showlist.id%>/edit"
+        class="btn btn-dark col-1.5 offset-2 edit-btn">edit</a>
+        <form action="/listings/_<%=showlist.id%>?_method=DELETE" method="POST">
+            <button class="btn btn-dark  offset-2 dlt-btn">delete</button>
+        </form> 
+        <br>
+        
+
+    </div>
+</div>
+    
