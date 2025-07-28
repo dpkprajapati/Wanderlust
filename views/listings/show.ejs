@@ -2,13 +2,12 @@
  
 <div class="row mt-3">
     <div class=" col-8 offset-2">
-        <h3>Listing Details</h3>
+       <h2><b><%=showlist.title%></b></h2>
     </div>    
-    <div class="card col-6 offset-2">
+    <div class="card col-6 offset-2 listing-card">
         <img src="<%=showlist.image%>" class="card-img-top" alt="listing" style="height: 300px; width: 100%; object-fit: cover;">
         <div class="card-body">
             <p card-text>
-                <b><%=showlist.title%></b> <br>
                 <%=showlist.description%> <br>
                 <%=showlist.price%> <br>
                 <%=showlist.country%> <br>
@@ -16,17 +15,51 @@
             </p>
         </div>
     </div>
-
-
-    <div class="btns bt-btn">
+    <div class="btns bt-btn mb-3">
         <a href="/listings/_<%=showlist.id%>/edit"
-        class="btn btn-dark col-1.5 offset-2 edit-btn">edit</a>
+        class="btn btn-dark col-1.5 offset-2 edit-btn ">edit</a>
         <form action="/listings/_<%=showlist.id%>?_method=DELETE" method="POST">
             <button class="btn btn-dark  offset-2 dlt-btn">delete</button>
         </form> 
         <br>
-        
+    </div>
 
+    <hr>
+    <!-- -adding reviews------------------------------------>
+    <div class="col-8 offset-2 mb-3" >
+        <h4>add a review</h4>
+        <form action="/listings/<%=showlist.id%>/reviews" method="post" class="needs-validation " novalidate>
+            <div class="mb-2 mt-3">
+                <label for="rating" class="form-label">Rating</label>
+                <input type="range" min="1" max="5" id="rating" class="form-range"   name="rating" required >
+            </div>
+            <div class="mb-3 mt-1.5"  >
+                <label for="comment"  class="form-label">Comments</label>
+                <textarea name="comment" id="comment" cols="50" rows="3" class="form-control" required></textarea>
+                <div class="invalid-feedback">
+                    please add some comments
+                </div>
+            </div>
+            <button type="submit" class="btn btn-outline-dark">add review</button>
+        </form>
+        <hr>
+        <!-- showing reviews------------------------------------ -->
+        <b><h4>All reviews</h4></b>
+        <div class="row">
+            <%for(reviews of showlist.review  ){%>
+            <div class="card col-4 mb-2 ms-3  " >
+                <div class="card-body">
+                    <b><h5 class="card-title">jhone the don</h5></b>
+                    <p class="card-text"><%=reviews.comment%></p>
+                    <p class="card-text"><%=reviews.rating%> stars</p>
+                </div>
+                <form method="post" action="/listings/<%=showlist.id%>/reviews/<%=reviews.id%>?_method=DELETE">
+                    <button class="mb-2 btn btn-dark btn-sm" >delete</button>
+                </form>
+            </div>
+         <%}%>
+        </div>
+        
     </div>
 </div>
     
