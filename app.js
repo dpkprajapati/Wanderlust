@@ -2,15 +2,27 @@ const express= require("express");
 const app = express();
 const mongoose = require("mongoose");
 const ejs = require("ejs");
-const Listing = require("./models/listing");
 const path= require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
-const wrapAsync= require("./utilis/wrapAsync.js")
 const expressError= require("./utilis/expressError.js")
-const {listingSchema}=require("./schema.js")
-const Review=require("./models/reviewing.js")
-const {reviewSchema}=require("./schema.js")
+const listings = require("./routes/listing.js")
+const reviews= require("./routes/review.js")
+const session  =  require("express-session")
+const flash = require("connect-flash")
+const passport =require("passport")
+const LocalStrategy = require("passport-local");
+const User =  require("./models/user.js")
+const userRouter= require("./routes/user.js")
+
+//connnectiion to mongodb
+async function main(){
+    await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust") 
+}
+main().then((res)=>{
+    console.log("Connected to MongoDB");
+}).catch((err)=>{
+    console.error("Error connecting to MongoDB", err)});
 
 
 app.set("view engine", "ejs");
@@ -21,13 +33,6 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname,"public")));
 app.engine("ejs", ejsMate);
 
-async function main(){
-    await mongoose.connect("mongodb://127.0.0.1:27017/wanderlust") 
-}
-main().then((res)=>{
-    console.log("Connected to MongoDB");
-}).catch((err)=>{
-    console.error("Error connecting to MongoDB", err)});
 
 
 
@@ -41,91 +46,54 @@ main().then((res)=>{
 //   next();
 // });
 
-// validation for server side 
-const validateReview = (req, res, next) => {
-  console.log("Incoming Review Data:", req.body);
-  let { error } = reviewSchema.validate(req.body);
-  if (error) {
-    let errMsg = error.details.map((el) => el.message).join(",");
-    throw new expressError(400, errMsg);
-  } else {
-    next();
-  }
-};
+
+const sessionOptions = {
+    secret:"mysecretmsg",
+    resave:false,
+    saveUninitialized:true,
+    cookie:{
+        expires:Date.now()+1*24*60*60*1000,
+        maxAge:1*24*60*60*1000
+    }
+}
+
+app.use(session(sessionOptions))
+app.use(flash())
+
+app.use(passport.initialize())
+app.use(passport.session())
+passport.use(new LocalStrategy(User.authenticate()));
+
+
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
+
+
 
 
 app.get("/",  (req,res)=>{
     res.send("Welcome to the home page")
 })
 
-app.get("/listings", wrapAsync(async (req,res)=>{
-    let allListings= await Listing.find({}); 
-    res.render("listings/index.ejs", {allListings});
- }))
-
-//  show route
-app.get("/listings/_:id",wrapAsync(async (req,res)=>{
-    let {id}= req.params;
-   const showlist= await Listing.findById(id).populate("review");
-    res.render("listings/show.ejs", {showlist})
-}))
-
-app.get("/listings/new",(req,res)=>{
-    res.render("listings/new.ejs")
+app.use((req,res,next)=>{
+    res.locals.success=req.flash("success")
+    next()
 })
 
-app.post("/listings", wrapAsync(async (req,res)=>{
-     if (!req.body){
-        throw new expressError(400,"enter required field")
-    }
-    //    let {title, description, image, price, location, country}= req.body;
-    let newListing= new Listing(req.body)
-    await newListing.save();
-    res.redirect("/listings");
-}))
-
-app.delete("/listings/_:id",wrapAsync(async (req,res,next)=>{
-    let { id }= req.params;
-    console.log(id)
-    const deletelist= await Listing.findByIdAndDelete(id);
-    console.log("deleted listing", deletelist);
-   res.redirect("/listings");
-}))
-
-app.get("/listings/_:id/edit",wrapAsync(async (req,res)=>{
-    let {id}= req.params;
-    let list= await Listing.findById(id);
-    res.render("listings/edit.ejs", {list});
-}))
-
-app.put("/listings/_:id", wrapAsync(async (req,res)=>{
-    let {id}= req.params; 
-    console.log(req.body)
-    await Listing.findByIdAndUpdate(id, {...req.body});
-    res.redirect(`/listings/_${id}`);
-}))
-
-//review route
-app.post("/listings/:id/reviews",validateReview,wrapAsync(async (req,res)=>{
-    let {id}= req.params
-    let showlist =await Listing.findById(req.params.id)
-    let newReview= new Review (req.body)
-    showlist.review.push(newReview)
-    await newReview.save()
-    await showlist.save()
-    console.log("new review saved")
-    res.redirect(`/listings/_${id}`)
-}))
+app.get("/demouser", async(req,res)=>{
+    let fakeuser = new User({
+        email:"college@gamil.com",
+        username:"vipin"
+    })
+    let register= await User.register(fakeuser,"hellouser")
+    res.send(register)
+})
 
 
-// delete review
-app.delete("/listings/:id/reviews/:reviewId",wrapAsync(async (req,res)=>{
-    let {id,reviewId}= req.params;
-    console.log("Listing ID:", id);
-    await Listing.findByIdAndUpdate(id, {$pull: {review :reviewId}})
-    await Review.findByIdAndDelete(reviewId)
-    res.redirect(`/listings/_${id}`)
-}))
+// defined routes are parent routes and to access some element from parent routes then set Route({mergeParams:true}) in he other routers to be exported and imported in app.js
+app.use("/listings", listings)
+app.use("/listings/:id/reviews",reviews)
+app.use("/signup",userRouter)
 
 
 // middleware when worng page
