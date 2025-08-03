@@ -31,11 +31,11 @@ const listingSchema=new Schema({
     }]
 })
 
-listingSchema.post("findOneAndDelete", async(listing)=>{
-    console.log(listing)
-    await Review.deleteMany({_id:{$in: listing.review}})
-    
-})
+listingSchema.post("findOneAndDelete", async (listing) => {
+    if (listing) {
+        await Review.deleteMany({ _id: { $in: listing.review } });
+    }
+});
 
 
 module.exports= mongoose.model("Listing", listingSchema);
