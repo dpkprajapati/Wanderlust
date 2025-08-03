@@ -5,16 +5,10 @@ body{
     min-height: 100vh;
 }
 
-.container
-{
-    flex: 1;
-}  
-.navbar{
-    height :5rem;
-    background-color: #f8f9fa;
+.container  {
+    flex:1;
+} 
 
-
-}
 .ftr{
     width: 100% !important;
 }

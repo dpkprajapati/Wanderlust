@@ -77,23 +77,15 @@ app.get("/",  (req,res)=>{
 
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success")
+    res.locals.error=req.flash("error")
     next()
-})
-
-app.get("/demouser", async(req,res)=>{
-    let fakeuser = new User({
-        email:"college@gamil.com",
-        username:"vipin"
-    })
-    let register= await User.register(fakeuser,"hellouser")
-    res.send(register)
 })
 
 
 // defined routes are parent routes and to access some element from parent routes then set Route({mergeParams:true}) in he other routers to be exported and imported in app.js
 app.use("/listings", listings)
 app.use("/listings/:id/reviews",reviews)
-app.use("/signup",userRouter)
+app.use("/",userRouter) 
 
 
 // middleware when worng page
@@ -102,10 +94,10 @@ app.use((req,res,next)=>{
 })
 
 // global middleware
-app.use((err, req, res, next) => {
-  const { status = 500, message = "Something went wrong!" } = err;
-  res.status(status).render("error.ejs", { err });
-  console.log(err)
+app.use((error, req, res, next) => {
+  const { status = 500, message = "Something went wrong!" } = error;
+  res.status(status).render("error.ejs", { error });
+  console.log(error)
 });
 
 
