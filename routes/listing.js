@@ -5,7 +5,7 @@ const wrapAsync= require("../utilis/wrapAsync.js")
 const expressError= require("../utilis/expressError.js")
 const {listingSchema}=require("../schema.js");
 const router = express.Router()
-
+const {isLoggedIn}= require("../middleware.js")
 
 // index route
 router.get("/", wrapAsync(async (req,res)=>{
@@ -13,8 +13,15 @@ router.get("/", wrapAsync(async (req,res)=>{
     res.render("listings/index.ejs", {allListings});
  }))
 
+// FIXED: new route BEFORE :id route (route order matters!)
+// new listings route
+router.get("/new",isLoggedIn,(req,res)=>{
+    res.render("listings/new.ejs")
+})
+
+// FIXED: Changed from "_:id" to ":id"
 //  show route
-router.get("/_:id",wrapAsync(async (req,res)=>{
+router.get("/:id",wrapAsync(async (req,res)=>{
     let {id}= req.params;
    const showlist= await Listing.findById(id).populate("review");
 //    if(!showlist){
@@ -23,11 +30,6 @@ router.get("/_:id",wrapAsync(async (req,res)=>{
 //    }
     res.render("listings/show.ejs", {showlist})
 }))
-
-// new listings route
-router.get("/new",(req,res)=>{
-    res.render("listings/new.ejs")
-})
 
 // new listing added
 router.post("/", wrapAsync(async (req,res)=>{
@@ -40,25 +42,27 @@ router.post("/", wrapAsync(async (req,res)=>{
     res.redirect("/listings");
 }))
 
+// FIXED: Changed from "_:id" to ":id"
 // update route
-router.get("/_:id/edit",wrapAsync(async (req,res)=>{
+router.get("/:id/edit",isLoggedIn,wrapAsync(async (req,res)=>{
     let {id}= req.params;
     let list= await Listing.findById(id);
     res.render("listings/edit.ejs", {list});
 }))
 
+// FIXED: Changed from "_:id" to ":id" and redirect URL
 // update submited
-router.put("/_:id", wrapAsync(async (req,res)=>{
+router.put("/:id", wrapAsync(async (req,res)=>{
     let {id}= req.params; 
     console.log(req.body)
     await Listing.findByIdAndUpdate(id, {...req.body})
     req.flash("success","updated successfully");
-    res.redirect(`/listings/_${id}`);
+    res.redirect(`/listings/${id}`); // FIXED: removed underscore
 }))
 
 
 // delete listing
-router.delete("/_:id",wrapAsync(async (req,res,next)=>{
+router.delete("/:id",isLoggedIn,wrapAsync(async (req,res,next)=>{
     let { id }= req.params;
     console.log(id)
     const deletelist= await Listing.findByIdAndDelete(id);
