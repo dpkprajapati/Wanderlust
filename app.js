@@ -24,7 +24,6 @@ main().then((res)=>{
 }).catch((err)=>{
     console.error("Error connecting to MongoDB", err)});
 
-
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname,"views"));
 app.use(express.json());
@@ -33,47 +32,29 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname,"public")));
 app.engine("ejs", ejsMate);
 
-
-
-
-//this is the for server side validation (in hopscotch , postman etc.)when we write "comment " instead of "comment" becoz the space could also throw error
-// this is extra bulletproofing
-// app.use((req, res, next) => {
-//   req.body = Object.entries(req.body).reduce((acc, [key, value]) => {
-//     acc[key.trim()] = value;
-//     return acc;
-//   }, {});
-//   next();
-// });
-
-
+// FIXED: Session configuration for proper cookie handling
 const sessionOptions = {
     secret:"mysecretmsg",
     resave:false,
     saveUninitialized:true,
     cookie:{
-        expires:Date.now()+1*24*60*60*1000,
-        maxAge:1*24*60*60*1000
+        maxAge: 1000 * 60 * 60 * 24, // 24 hours
+        httpOnly: true,
+        secure: false, // Required for localhost
+        sameSite: 'lax' // Required for proper cookie handling
     }
 }
 
 app.use(session(sessionOptions))
 app.use(flash())
 
+// FIXED: Passport initialization before flash locals
 app.use(passport.initialize())
 app.use(passport.session())
+
 passport.use(new LocalStrategy(User.authenticate()));
-
-
 passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
-
-
-
-
-app.get("/",  (req,res)=>{
-    res.send("Welcome to the home page")
-})
 
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success")
@@ -81,12 +62,14 @@ app.use((req,res,next)=>{
     next()
 })
 
+app.get("/",  (req,res)=>{
+    res.send("Welcome to the home page")
+})
 
 // defined routes are parent routes and to access some element from parent routes then set Route({mergeParams:true}) in he other routers to be exported and imported in app.js
 app.use("/listings", listings)
 app.use("/listings/:id/reviews",reviews)
 app.use("/",userRouter) 
-
 
 // middleware when worng page
 app.use((req,res,next)=>{
@@ -99,7 +82,6 @@ app.use((error, req, res, next) => {
   res.status(status).render("error.ejs", { error });
   console.log(error)
 });
-
 
 app.listen("8080", ()=>{
     console.log("Server is running on port 8080");
