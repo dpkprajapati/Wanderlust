@@ -56,9 +56,11 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
+// res.locals can be used anywhere in the project
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success")
     res.locals.error=req.flash("error")
+    res.locals.currUser= req.user;       //this checks the user credentials if he is logged in or not
     next()
 })
 
