@@ -8,25 +8,30 @@
     <div class="card col-6 offset-2 listing-card">
         <img src="<%=showlist.image%>" class="card-img-top" alt="listing" style="height: 300px; width: 100%; object-fit: cover;">
         <div class="card-body">
-            <p card-text>
-                <%=showlist.description%> <br>
-                <%=showlist.price%> <br>
-                <%=showlist.country%> <br>
-                <%=showlist.location%> <br>
-            </p>
-        </div>
+                <p class="card-text">Owened by:<i><%=showlist.owner.username%></i></p>
+                <br>
+                <p class="card-text"><%=showlist.description%></p>
+                <p class="card-text"><%=showlist.price%> </p>
+                <p class="card-text"><%=showlist.country%></p> 
+                <p class="card-text"><%=showlist.location%></p> 
+       </div>
     </div>
+
+    <!-- edit and delete btns -->
+<%if(currUser && showlist.owner._id.equals(currUser._id)){%>
     <div class="btns bt-btn mb-3">
         <a href="/listings/<%=showlist.id%>/edit"
         class="btn btn-dark col-1.5 offset-2 edit-btn ">edit</a>
+
         <form action="/listings/<%=showlist.id%>?_method=DELETE" method="POST">
             <button class="btn btn-dark  offset-2 dlt-btn">delete</button>
         </form> 
         <br>
     </div>
-
     <hr>
+<%}%>
     <!-- -adding reviews-------------------------------------->
+    <%if(currUser){%>
     <div class="col-8 offset-2 mb-3" >
         <h4>add a review</h4>
         <form action="/listings/<%=showlist.id%>/reviews" method="post" class="needs-validation " novalidate>
@@ -43,24 +48,27 @@
             </div>
             <button type="submit" class="btn btn-outline-dark">add review</button>
         </form>
+    <%}%>
         <hr>
-        <!-- showing reviews------------------------------------ -->
+  <!-- showing reviews------------------------------------ -->
         <b><h4>All reviews</h4></b>
         <div class="row">
-            <%for(reviews of showlist.review  ){%>
-            <div class="card col-4 mb-2 ms-3  " >
+            <%for(reviews of showlist.review){%>
+            <div class="card col-4 mb-2 ms-3">
                 <div class="card-body">
-                    <b><h5 class="card-title">jhone the don</h5></b>
+                    <b><h5 class="card-title">@<%=reviews.author.username%></h5></b>
                     <p class="card-text"><%=reviews.comment%></p>
                     <p class="card-text"><%=reviews.rating%> stars</p>
                 </div>
+                <!-- FIXED: Only show delete button if user is logged in AND is the author of the review -->
+                <%if(currUser && reviews.author._id.equals(currUser._id)){%>
                 <form method="post" action="/listings/<%=showlist.id%>/reviews/<%=reviews.id%>?_method=DELETE">
                     <button class="mb-2 btn btn-dark btn-sm">delete</button>
                 </form>
+                <%}%>
             </div>
          <%}%>
         </div>
-        
     </div>
     <% } else { %>
     <div class="col-8 offset-2">
