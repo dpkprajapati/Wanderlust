@@ -73,6 +73,7 @@ app.use("/listings", listings)
 app.use("/listings/:id/reviews",reviews)
 app.use("/",userRouter) 
 
+
 // middleware when worng page
 app.use((req,res,next)=>{
     next(new expressError(404,"page not found"));
