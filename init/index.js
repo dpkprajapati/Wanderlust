@@ -12,7 +12,6 @@ main().then((res)=>{
     console.error("Error connecting to MongoDB", err)
 });
 
-
 const initDb= async ()=>{
     await Listing.deleteMany({})
    initData.data = initData.data.map((obj)=>(

@@ -12,9 +12,8 @@ const listingSchema=new Schema({
         type:String
     },
     image:{
-        type:String,
-        default:"https://wallpaperaccess.com/full/11093098.jpg", //this used when image attribute is not set
-        set:(v)=>v===""?"https://wallpaperaccess.com/full/11093098.jpg":v,   //this used when image attribute is set to empty string
+        url:String,
+        filename: String,
     },
     price: {
         type:Number,
@@ -32,7 +31,41 @@ const listingSchema=new Schema({
     owner:{
         type:Schema.Types.ObjectId,
         ref:"User"
-    }
+    },
+    category: {
+        type: String,
+        enum: [
+            "Trending", 
+            "Rooms", 
+            "Hills", 
+            "Premium", 
+            "Iconic cities", 
+            "Arctic", 
+            "Camping", 
+            "Farms", 
+            "Ships", 
+            "Religious"
+        ],
+        required: true,
+        default: "Rooms"
+    },
+    location: {
+        type: String,
+        required: true
+    },
+    geometry: {
+        type: {
+            type: String,
+            enum: ['Point'], // GeoJSON type must be Point
+            required: true,
+            default: 'Point'
+        },
+        coordinates: {
+            type: [Number], // Array of numbers: [longitude, latitude]
+            required: true,
+            default: [0,0]
+        }
+    },
 })
 
 listingSchema.post("findOneAndDelete", async (listing) => {

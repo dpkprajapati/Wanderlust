@@ -7,6 +7,18 @@ module.exports.listingSchema=Joi.object({
         country:Joi.string().required(),
         price:Joi.number().required(),
         image:Joi.string().allow("",null),
+         category: Joi.string().valid(
+        "Trending", 
+        "Rooms", 
+        "Hills", 
+        "Premium", 
+        "Iconic cities", 
+        "Arctic", 
+        "Camping", 
+        "Farms", 
+        "Ships", 
+        "Religious"
+    ).required()
 })
 
 module.exports.reviewSchema = Joi.object({
@@ -14,7 +26,6 @@ module.exports.reviewSchema = Joi.object({
         comment: Joi.string().trim().min(5).required().messages({
         "string.min": "Comment must be at least 5 characters long"
         })
-
 })
 
 

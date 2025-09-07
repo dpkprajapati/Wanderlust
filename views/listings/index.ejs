@@ -1,18 +1,140 @@
 <% layout("layouts/boilerplate") -%>
 <body>
-    <h2>here are all listings</h2>
+    <!-- <h2>here are all listings</h2> -->
     <!-- <form action="/listings/new" method="get">
         <button type="submit">add new place</button>
     </form> -->
-<div class="row row-cols-lg-5 row-cols-md-3 row-cols-sm-1 ">
+    <style>
+      /* Category Filter Navigation - MINIMAL ADDITION TO YOUR EXISTING STYLES */
+.category-filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 20px 0;
+    padding: 0 20px;
+}
+
+.category-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #666;
+    padding: 10px;
+    min-width: 60px;
+}
+
+.category-btn:hover {
+    color: red; /* Using your red theme */
+    text-decoration: none;
+}
+
+.category-btn.active {
+    color: red; /* Using your red theme */
+}
+
+.category-icon {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.category-label {
+    font-size: 12px;
+    text-align: center;
+}
+
+.category-badge {
+    background-color: #f8f9fa;
+    color: #666;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+.tax-toggle{
+  border: 1px solid black;
+  border-radius: 1rem;
+  height:3.25rem;
+  padding:1rem;
+  margin-left: 4rem;;
+}
+
+
+    </style>
+<!-- Category Filter Navigation - ADDED -->
+<div class="category-filters">
+    <a href="/listings" class="category-btn <%= selectedCategory === 'all' ? 'active' : '' %>">
+        <div class="category-icon"><i class="fas fa-home"></i></div>
+        <div class="category-label">All</div>
+    </a>
+    <a href="/listings?category=Trending" class="category-btn <%= selectedCategory === 'Trending' ? 'active' : '' %>">
+        <div class="category-icon"><i class="fas fa-fire"></i></div>
+        <div class="category-label">Trending</div>
+    </a>
+    <a href="/listings?category=Rooms" class="category-btn <%= selectedCategory === 'Rooms' ? 'active' : '' %>">
+        <div class="category-icon"><i class="fas fa-bed"></i></div>
+        <div class="category-label">Rooms</div>
+    </a>
+    <a href="/listings?category=Hills" class="category-btn <%= selectedCategory === 'Hills' ? 'active' : '' %>">
+        <div class="category-icon"><i class="fas fa-mountain"></i></div>
+        <div class="category-label">Hills</div>
+    </a>
+    <a href="/listings?category=Premium" class="category-btn <%= selectedCategory === 'Premium' ? 'active' : '' %>">
+        <div class="category-icon"><i class="fas fa-gem"></i></div>
+        <div class="category-label">Premium</div>
+    </a>
+    <a href="/listings?category=Iconic cities" class="category-btn <%= selectedCategory === 'Iconic cities' ? 'active' : '' %>">
+        <div class="category-icon"><i class="fas fa-city"></i></div>
+        <div class="category-label">Iconic cities</div>
+    </a>
+    <a href="/listings?category=Arctic" class="category-btn <%= selectedCategory === 'Arctic' ? 'active' : '' %>">
+        <div class="category-icon"><i class="fas fa-snowflake"></i></div>
+        <div class="category-label">Arctic</div>
+    </a>
+    <a href="/listings?category=Camping" class="category-btn <%= selectedCategory === 'Camping' ? 'active' : '' %>">
+        <div class="category-icon"><i class="fas fa-campground"></i></div>
+        <div class="category-label">Camping</div>
+    </a>
+    <a href="/listings?category=Farms" class="category-btn <%= selectedCategory === 'Farms' ? 'active' : '' %>">
+        <div class="category-icon"><i class="fas fa-tractor"></i></div>
+        <div class="category-label">Farms</div>
+    </a>
+    <a href="/listings?category=Ships" class="category-btn <%= selectedCategory === 'Ships' ? 'active' : '' %>">
+        <div class="category-icon"><i class="fas fa-ship"></i></div>
+        <div class="category-label">Ships</div>
+    </a>
+    <a href="/listings?category=Religious" class="category-btn <%= selectedCategory === 'Religious' ? 'active' : '' %>">
+        <div class="category-icon"><i class="fas fa-place-of-worship"></i></div>
+        <div class="category-label">Religious</div>
+    </a>  
+      <div class="tax-toggle">
+        <div class="form-check-reverse form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+          <label class="form-check-label" for="switchCheckDefault">Costing after Taxes </label>
+        </div>
+    </div>
+</div>
+
+<% if (allListings.length === 0) { %>
+    <div class="col-12 text-center">
+        <h4>No listings found</h4>  <!-- ✏️ EDIT THIS -->
+        <p><a href="/listings/new">Create a new listing</a></p>  <!-- ✏️ EDIT THIS -->
+    </div>
+<% } %>
+
+<div class="row row-cols-lg-5 row-cols-md-3 row-cols-sm-1 mt-3">
   <%for (let list of allListings){%>
     <div class=" col">  <a href="/listings/<%=list.id%>" class="listing-link">
-        <div class="card listing-card" > <img src="<%=list.image%>" class="card-img-top" alt="list_image" style="height:14rem;"/>
-          <div class="card-img-overlay">abcd</div>
+        <div class="card listing-card" > <img src="<%=list.image.url%>" class="card-img-top" alt="list_image" style="height:14rem;"/>
+          <div class="card-img-overlay">wanderlust</div>
           <div class="card-body">
             <p class="card-text">
               <b><%=list.title%></b> <br>
-               <%=list.price%>/night </p>
+              <span class="listing-price">&#8377; <%= list.price.toLocaleString("en-IN") %> / night</span>
+            </p>
           </div>
         </div>
       </a>
@@ -20,3 +142,40 @@
   <%}%>
 </div>
 </body>
+
+<script>
+let taxSwitch = document.getElementById("switchCheckDefault");
+
+taxSwitch.addEventListener("change", () => {
+  let listings = document.querySelectorAll('.listing-card');
+
+  for (let listing of listings) {
+    let priceElement = listing.querySelector('.listing-price');
+    let priceText = priceElement.innerText;
+    
+    // Check if the price has already been modified
+    let isTaxed = priceElement.dataset.taxed === 'true';
+
+    // Extract the numerical price and remove commas
+    let match = priceText.match(/₹\s*([\d,]+)/);
+    if (!match) continue; // Skip if no price is found
+
+    let currentPrice = parseInt(match[1].replace(/,/g, ''));
+
+    if (taxSwitch.checked && !isTaxed) {
+      // Add tax and display " +18%GST" in italics
+      let taxPrice = currentPrice * 1.18;
+      let formattedPrice = `₹ ${taxPrice.toLocaleString("en-IN", {maximumFractionDigits: 0})} / night <i >+18%GST</i>`;
+      priceElement.innerHTML = formattedPrice; // Use innerHTML to render the <i> tag
+      priceElement.dataset.originalPrice = currentPrice;
+      priceElement.dataset.taxed = 'true';
+    } else if (!taxSwitch.checked && isTaxed) {
+      // Remove tax
+      let originalPrice = priceElement.dataset.originalPrice;
+      let formattedPrice = `₹ ${parseInt(originalPrice).toLocaleString("en-IN")} / night`;
+      priceElement.innerHTML = formattedPrice; // Use innerHTML
+      priceElement.dataset.taxed = 'false';
+    }
+  }
+});
+</script>

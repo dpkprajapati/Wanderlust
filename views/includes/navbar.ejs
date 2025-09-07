@@ -1,33 +1,115 @@
-<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top shadow-sm">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/"><i class="fa-solid fa-compass"></i></a>
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNavAltMarkup"
-            aria-controls="navbarNavAltMarkup"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-            >
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-link active" aria-current="page" href="/">Home</a>
-                <a class="nav-link" href="/listings">listings</a>
-                <a class="nav-link" href="/listings/new">add new listings</a>
-            </div>
-             <div class="navbar-nav ms-auto">
-                <%if(!currUser){%>
-                    <a class="nav-link active" aria-current="page" href="/signup">signup</a>
-                    <a class="nav-link" href="/login">login</a>
-                <%}%>
-                <%if(currUser){%>
-                     <a class="nav-link" href="/logout">logout</a>
-                <%}%>
-               
-            </div>
-        </div>
+<style>
+  .btn-search {
+    background-color: #fe424d;
+    color: #fff;
+    border: none;
+    border-radius: 2rem;
+  }
+  .btn-search:hover {
+    opacity: 0.8;
+  }
+  .search-input {
+    border-radius: 2rem;
+    width: 15rem;
+  }
+  .host {
+    border-radius: 1rem;
+  }
+  .host:hover {
+    cursor: pointer;
+    background-color: #f0eeee;
+    border-radius: 1rem;
+  }
+  .navbar {
+    background-color: #fff !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  }
+  #user-icon {
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: #333;
+  }
+</style>
+
+<nav class="navbar navbar-expand-md bg-body-dark border-bottom sticky-top shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/listings"><i class="fa-solid fa-compass"></i></a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link" href="/listings">Explore</a>
+      </div>
+      <div class="navbar-search ms-auto">
+        <form class="d-flex" role="search" method="GET" action="/listings">
+          <input
+            name="search"
+            class="form-control me-2 search-input"
+            type="text"
+            placeholder="Search destination"
+            aria-label="Search"
+          />
+          <button class="btn btn-search" type="submit">
+            <i class="fa-solid fa-magnifying-glass"></i> Search
+          </button>
+        </form>
+      </div>
+      <div class="navbar-nav ms-auto align-items-center">
+        <a class="nav-link host" href="/listings/new">Become a host</a>
+        <i id="user-icon" class="fa-solid fa-user-circle"></i>
+      </div>
     </div>
+  </div>
 </nav>
+
+<!-- Modal for Auth -->
+<div
+  class="modal fade"
+  id="authModal"
+  tabindex="-1"
+  aria-labelledby="authModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="authModalLabel">Account</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body text-center">
+        <% if (!currUser) { %>
+          <a href="/signup" class="btn btn-primary mx-2">Sign Up</a>
+          <a href="/login" class="btn btn-success mx-2">Log In</a>
+        <% } else { %>
+          <p>Welcome, <b><%= currUser.username %></b></p>
+          <a href="/logout" class="btn btn-danger mx-2">Log Out</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const userIcon = document.getElementById("user-icon");
+    const authModal = new bootstrap.Modal(document.getElementById("authModal"));
+
+    userIcon.addEventListener("click", () => {
+      authModal.show();
+    });
+  });
+</script>

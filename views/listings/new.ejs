@@ -2,57 +2,74 @@
 
 <div class="row">
     <div class="col-8 offset-2">
-       <br><br>
+        <br><br>
         <h3>Create a New Listing</h3>
-        
-        <form method="POST" action="/listings" class="needs-validation " novalidate>
-            <div mb="3>">
+        <form method="POST" action="/listings" class="needs-validation" novalidate enctype="multipart/form-data">
+            <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
                 <input name="title" placeholder="enter title" type="text" class="form-control" required/>
-               <div class="invalid-feedback">
+                <div class="invalid-feedback">
                     title should be valid
                 </div>
-            </div>    
-            <div class="mb-3"> 
+             </div>    
+            <div class="mb-3">
                 <label for="discription" class="form-label">Discription</label>
                 <textarea
-                name="description"
-                placeholder="enter description"
-                class="form-control"
-                required
-
-            ></textarea>
+                    name="description"
+                    placeholder="enter description"
+                    class="form-control"
+                    required
+                ></textarea>
                 <div class="invalid-feedback">
-                        description should be valid
+                    description should be valid
                 </div>
             </div>
             <div class="mb-3">
-                <label for="image" class="form-label">Image link</label>
-                <input name="image" placeholder="enter image URL/Link" type="text" class="form-control" />
+                <label for="image" class="form-label">upload Image</label>
+                <input name="image" placeholder="enter image URL/Link" type="file" class="form-control" />
+                <!-- Remove random "required" outside input -->
             </div>
             <div class="row">
                 <div class="mb-3 col-md-4">
                     <label for="price" class="form-label">Price</label>
                     <input name="price" placeholder="enter price" type="number" class="form-control" required/>
                     <div class="invalid-feedback">
-                            price should be valid
+                        price should be valid
                     </div>    
                 </div>
                 <div class="mb-3 col-md-8">
                     <label for="country" class="form-label">Country</label>
-                    <input name="country" placeholder="enter country" type="text" class="form-control " required/>   
+                    <input name="country" placeholder="enter country" type="text" class="form-control" required/>   
                     <div class="invalid-feedback">
-                            enter a valid country 
+                        enter a valid country 
                     </div>
                 </div>
-           
+            </div>
             <div class="mb-3">
                 <label for="location" class="form-label">Location</label>
                 <input name="location" placeholder="enter location" type="text" class="form-control" required/>
                 <div class="invalid-feedback">
                     location should be valid
                 </div>
-            <button class="btn btn-dark add-btn mt-3"  >Add</button>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select name="category" class="form-control" required>
+                    <option value="">Select a Category</option>
+                    <option value="Trending">Trending</option>
+                    <option value="Rooms">Rooms</option>
+                    <option value="Hills">Hills</option>
+                    <option value="Premium">Premium</option>
+                    <option value="Iconic cities">Iconic cities</option>
+                    <option value="Arctic">Arctic</option>
+                    <option value="Camping">Camping</option>
+                    <option value="Farms">Farms</option>
+                    <option value="Ships">Ships</option>
+                    <option value="Religious">Religious</option>
+                </select>
+                <div class="invalid-feedback">Please select a category</div>
+            </div>
+            <button class="btn btn-dark add-btn mt-3">Add</button>
         </form>
         <br><br>
     </div>

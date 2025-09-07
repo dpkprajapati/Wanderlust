@@ -105,3 +105,8 @@ body{
     background-color: #d16868 !important;
 }
 
+#map{
+    width: 90% !important;
+    height: 400px !important;
+    border-radius: 1rem !important;
+}
