@@ -69,7 +69,7 @@
             <b><h4>All reviews</h4></b>
             <div class="row">
                 <%for(reviews of showlist.review){%>
-                <div class="card col-4 mb-2 ms-3" >
+                <div class="card col-12 col-sm-6 col-md-4" >
                     <div class="card-body">
                         <b><h5 class="card-title">@<%=reviews.author.username%></h5></b>
                         <p class="starability-result card-text" data-rating="<%=reviews.rating%>" >

@@ -102,6 +102,10 @@ app.use((req,res,next)=>{
 //     res.send("Welcome to the home page")
 // })
 
+app.get("/", (req, res) => {
+  res.redirect("/listings");
+});
+
 // defined routes are parent routes and to access some element from parent routes then set Route({mergeParams:true}) in he other routers to be exported and imported in app.js
 app.use("/listings", listings)
 app.use("/listings/:id/reviews",reviews)
@@ -114,6 +118,8 @@ app.use("/",userRouter)
 app.listen("8080", ()=>{
     console.log("Server is running on port 8080");
 })
+
+
 
 // middleware when worng page
 app.use((req, res, next) => {

@@ -84,8 +84,12 @@ module.exports.createListing = async (req, res) => {
       geometry.coordinates = data.features[0].geometry.coordinates; // [lng, lat]
     }
     console.log(req.body);
-    let url = req.file.path;
-    let filename = req.file.filename;
+    let url = "";
+    let filename = "";
+    if (req.file) {
+      url = req.file.path;
+      filename = req.file.filename;
+    }
     console.log(url, "..", filename);
     let newListing = new Listing(req.body);
     newListing.owner = req.user._id;
